@@ -49,6 +49,8 @@ const run = async () => {
 
     const octokit = github.getOctokit(botToken)
 
+    console.log(`writing to ${owner}/${repo} for issue number ${prNumber}`)
+    
     await octokit.issues.createComment({
       owner,
       repo,
