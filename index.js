@@ -98,7 +98,9 @@ async function publish(projectId, topicName, artifactBucket, messageJson) {
 
   try {
     const messageId = await pubSubClient.topic(topicName)
-      .publish(dataBuffer);
+      .publish(dataBuffer, {
+        ci: "actions"
+      });
     core.info(`Message ${messageId} published.`);
   } catch (error) {
     core.error(`Received error while publishing: ${error.message}`);
