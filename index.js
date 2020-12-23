@@ -78,6 +78,8 @@ const run = async () => {
 async function publish(projectId, topicName, artifactBucket, messageJson) {
   const pubSubClient = new PubSub({projectId});
 
+  core.info(`helm path: ${messageJson.latestHelmChart}`);
+
   const spinnakerMessage = {
     kind: "storage#object",
     name: messageJson.latestHelmChart,
