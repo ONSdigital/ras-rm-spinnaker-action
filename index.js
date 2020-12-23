@@ -49,8 +49,8 @@ const run = async () => {
 
     const octokit = github.getOctokit(botToken)
 
-    console.log(`writing to ${owner}/${repo} for issue number ${prNumber}`)
-    
+    core.info(`writing to ${owner}/${repo} for issue number ${prNumber}`)
+
     await octokit.issues.createComment({
       owner,
       repo,
@@ -99,9 +99,9 @@ async function publish(projectId, topicName, artifactBucket, messageJson) {
   try {
     const messageId = await pubSubClient.topic(topicName)
       .publish(dataBuffer);
-    console.log(`Message ${messageId} published.`);
+    core.info(`Message ${messageId} published.`);
   } catch (error) {
-    console.error(`Received error while publishing: ${error.message}`);
+    core.error(`Received error while publishing: ${error.message}`);
     core.setFailed(error.message);
   }
 }
