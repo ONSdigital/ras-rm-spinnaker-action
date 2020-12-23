@@ -1,0 +1,109 @@
+const core = require('@actions/core');
+const github = require('@actions/github');
+const {PubSub} = require('@google-cloud/pubsub');
+
+const NAMESPACE_POSITION = 1;
+const PARAMS_POSITION = 2;
+const CONFIG_BRANCH = "configBranch";
+
+const getInputs = () => {
+  return {
+    botToken: core.getInput('bot-token'),
+    prNumber: `pr-${github.context.issue.number}`,
+    spinnakerTopic: core.getInput('spinnaker-topic'),
+    artifactBucket: core.getInput('artifact-bucket'),
+    projectId: core.getInput('gcp-project'),
+    commentBody: core.getInput("comment-body"),
+    latestHelmChart: core.getInput("helm-chart")
+  }
+}
+
+const run = async () => {
+  try {
+    const {botToken, prNumber, spinnakerTopic, 
+      artifactBucket, projectId, commentBody, latestHelmChart} = getInputs()
+
+    const namespace = commentBody.split(" ")[NAMESPACE_POSITION];
+    let paramKey = "";
+    let paramValue = "";
+    let configBranch = "main";
+    if (commentBody.split(" ").length > 2) {
+      const params = commentBody.split(" ")[PARAMS_POSITION];
+      if (params.startsWith(CONFIG_BRANCH)) {
+        configBranch = params.split("=")[1];
+      } else {
+        paramKey = params.split("=")[0];
+        paramValue = params.split("=")[1];
+      }
+    }
+
+    const repo = github.context.repo.repo;
+    const owner = github.context.repo.owner;
+
+    const commentMessage = `Triggering spinnaker with the following: \n- namespace: \`${namespace}\` 
+      \n - pr number: \`${prNumber}\` 
+      \n - params: 
+      \n\t - config Branch: \`${configBranch}\` 
+      \n\t - paramKey: \`${paramKey}\` 
+      \n\t - paramValue: \`${paramValue}\``;
+
+    const octokit = github.getOctokit(botToken)
+
+    await octokit.issues.createComment({
+      owner,
+      repo,
+      issue_number: prNumber,
+      body: commentMessage,
+    })
+
+    const messageJson = {
+      namespace,
+      prNumber,
+      paramKey,
+      paramValue,
+      actor: github.context.actor,
+      configBranch,
+      latestHelmChart
+    }
+
+    await publish(projectId, spinnakerTopic, artifactBucket, messageJson)
+
+  } catch (error) {
+    core.setFailed(error.message);
+  }
+}
+
+async function publish(projectId, topicName, artifactBucket, messageJson) {
+  const pubSubClient = new PubSub({projectId});
+
+  const spinnakerMessage = {
+    kind: "storage#object",
+    name: messageJson.latestHelmChart,
+    bucket : artifactBucket,
+    parameters: {
+      tag : messageJson.prNumber,
+      namespace: messageJson.namespace,
+      cluster: "dev",
+      actor: messageJson.actor,
+      paramKey: messageJson.paramKey,
+      paramValue: messageJson.paramValue,
+      configBranch: messageJson.configBranch
+    }
+ }
+  const data = JSON.stringify(spinnakerMessage);
+
+  const dataBuffer = Buffer.from(data);
+
+  try {
+    const messageId = await pubSubClient.topic(topicName)
+      .publish(dataBuffer);
+    console.log(`Message ${messageId} published.`);
+  } catch (error) {
+    console.error(`Received error while publishing: ${error.message}`);
+    core.setFailed(error.message);
+  }
+}
+
+run()
+
+export default run
