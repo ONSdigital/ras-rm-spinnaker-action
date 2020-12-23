@@ -1,7 +1,6 @@
 # ras-rm-spinnaker-action
 
-> A GitHub Action for publishing PRs to specific ras-rm environments
-call the action by commenting on a pr
+> A GitHub Action for publishing PRs to specific ras-rm environments. Trigger the action by commenting on a pr
 ```
 /deploy <namespace> key=value
 ```
@@ -36,7 +35,7 @@ jobs:
           bot-token: ${{ secrets.BOT_TOKEN }}
           spinnaker-topic: ${{ secrets.SPINNAKER_TOPIC }}
           artifact-bucket: ${{ secrets.ARTIFACT_BUCKET }}
-          helm-chart: $SERVICE/$SERVICE-latest.tgz
+          helm-chart: ${{ env.SERVICE }}/$${{ env.SERVICE }}-latest.tgz
 ```
 
 ## Configuration options
