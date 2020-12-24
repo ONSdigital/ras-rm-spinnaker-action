@@ -52,12 +52,11 @@ const run = async () => {
     const repo = github.context.repo.repo;
     const owner = github.context.repo.owner;
 
-    const commentMessage = `Triggering spinnaker with the following: \n- namespace: \`${namespace}\` 
-      \n - pr number: \`${prNumber}\` 
-      \n - params: 
-      \n\t - config Branch: \`${configBranch}\` 
-      \n\t - paramKey: \`${paramKey}\` 
-      \n\t - paramValue: \`${paramValue}\``;
+    const commentMessage = `Spinnaker pipeline triggered with the following parameters: \n- namespace: \`${namespace}\` 
+      \n - tag: \`${prNumber}\` 
+      \n - configBranch: \`${configBranch}\` 
+      \n - paramKey: \`${paramKey}\` 
+      \n - paramValue: \`${paramValue}\``;
 
     const octokit = github.getOctokit(botToken);
 
