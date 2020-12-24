@@ -52,7 +52,7 @@ const run = async () => {
     const repo = github.context.repo.repo;
     const owner = github.context.repo.owner;
 
-    const commentMessage = `Spinnaker pipeline triggered with the following parameters: \n- namespace: \`${namespace}\` 
+    const commentMessage = `Deploying to dev cluster with following parameters: \n- namespace: \`${namespace}\` 
       \n - tag: \`${prNumber}\` 
       \n - configBranch: \`${configBranch}\` 
       \n - paramKey: \`${paramKey}\` 
