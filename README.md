@@ -28,14 +28,14 @@ jobs:
     runs-on: ubuntu-latest
     if: contains(github.event.comment.body, '/deploy')
     steps:
-      - uses: onsdigital/ras-rm-spinnaker-action@v1
+      - uses: onsdigital/ras-rm-spinnaker-action@main
         with:
           comment-body: ${{ github.event.comment.body }}
           gcp-project: ${{ secrets.GOOGLE_PROJECT_ID }}
           bot-token: ${{ secrets.BOT_TOKEN }}
           spinnaker-topic: ${{ secrets.SPINNAKER_TOPIC }}
           artifact-bucket: ${{ secrets.ARTIFACT_BUCKET }}
-          helm-chart: ${{ env.SERVICE }}/$${{ env.SERVICE }}-latest.tgz
+          helm-chart: ${{ env.SERVICE }}/${{ env.SERVICE }}-latest.tgz
 ```
 
 ## Configuration options
