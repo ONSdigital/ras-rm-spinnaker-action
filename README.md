@@ -2,10 +2,16 @@
 
 > A GitHub Action for publishing PRs to specific ras-rm environments. Trigger the action by commenting on a pr
 ```
-/deploy <namespace> key=value
+/deploy <namespace>
 ```
 
-This will deploy a pr into a specified namespace in the dev cluster. `key=value` allows you to override a specific helm chart config for a deployment, its optional and is most useful for testing feature flags.
+This will deploy a pr into a specified namespace in the dev cluster.
+
+You can deploy with `key=value` to override a specific helm chart config for a deployment, its optional and is most useful for testing feature flags:
+
+```
+/deploy <namespace> key=value
+```
 
 deploy a PR using a secific config branch:
 
