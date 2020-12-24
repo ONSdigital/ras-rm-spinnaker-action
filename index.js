@@ -37,27 +37,6 @@ const run = async () => {
       }
     }
 
-    const repo = github.context.repo.repo;
-    const owner = github.context.repo.owner;
-
-    const commentMessage = `Triggering spinnaker with the following: \n- namespace: \`${namespace}\` 
-      \n - pr number: \`${prNumber}\` 
-      \n - params: 
-      \n\t - config Branch: \`${configBranch}\` 
-      \n\t - paramKey: \`${paramKey}\` 
-      \n\t - paramValue: \`${paramValue}\``;
-
-    const octokit = github.getOctokit(botToken)
-
-    core.info(`writing to ${owner}/${repo} for issue number ${github.context.issue.number}`)
-
-    await octokit.issues.createComment({
-      owner,
-      repo,
-      issue_number: github.context.issue.number,
-      body: commentMessage,
-    })
-
     const messageJson = {
       namespace,
       prNumber,
@@ -68,7 +47,28 @@ const run = async () => {
       latestHelmChart
     }
 
-    await publish(projectId, spinnakerTopic, artifactBucket, messageJson)
+    await publish(projectId, spinnakerTopic, artifactBucket, messageJson);
+
+    const repo = github.context.repo.repo;
+    const owner = github.context.repo.owner;
+
+    const commentMessage = `Triggering spinnaker with the following: \n- namespace: \`${namespace}\` 
+      \n - pr number: \`${prNumber}\` 
+      \n - params: 
+      \n\t - config Branch: \`${configBranch}\` 
+      \n\t - paramKey: \`${paramKey}\` 
+      \n\t - paramValue: \`${paramValue}\``;
+
+    const octokit = github.getOctokit(botToken);
+
+    core.info(`writing to ${owner}/${repo} for issue number ${github.context.issue.number}`);
+
+    await octokit.issues.createComment({
+      owner,
+      repo,
+      issue_number: github.context.issue.number,
+      body: commentMessage,
+    })
 
   } catch (error) {
     core.setFailed(error.message);
