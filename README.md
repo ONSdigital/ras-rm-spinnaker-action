@@ -44,11 +44,14 @@ jobs:
           helm-chart: ${{ env.SERVICE }}/${{ env.SERVICE }}-latest.tgz
 ```
 
+## Updating
+This action has been built following the github [guide](https://docs.github.com/en/free-pro-team@latest/actions/creating-actions/creating-a-javascript-action). Code changes must be followed by compiling into an uber file using [ncc](https://github.com/vercel/ncc). Running a `make` and commit should do the trick.
+
 ## Configuration options
 
 | Argument  | Location | Description                                                                                                                 | Required | 
 | --------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------- | -------- |
-| comment-body         | with     | mist be of the form `/deploy <namespace> key=value`                                        | yes      |
+| comment-body         | with     | must be of the form `/deploy <namespace> key=value`                                        | yes      |
 | bot-token            | with     | Github token | yes    |
 | gcp-project          | with     | gcp project containing the pubsub topic that spinnaker listens to | yes       |
 | spinnaker-topic      | with     | spinnaker pubsub topic          | yes       |
