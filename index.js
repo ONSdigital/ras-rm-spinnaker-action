@@ -5,6 +5,7 @@ const {PubSub} = require('@google-cloud/pubsub');
 const NAMESPACE_POSITION = 1;
 const PARAMS_POSITION = 2;
 const CONFIG_BRANCH = "configBranch";
+const DEPLOY = "/deploy"
 
 const getInputs = () => {
   return {
@@ -35,6 +36,11 @@ const run = async () => {
         paramKey = params.split("=")[0];
         paramValue = params.split("=")[1];
       }
+    }
+
+    if (namespace.toLowerCase() === DEPLOY || paramKey.toLowerCase() === DEPLOY 
+        || paramValue === DEPLOY || configBranch === DEPLOY) {
+      throw { message: `Invalid token detected: ${DEPLOY} can only supplied once`};
     }
 
     const messageJson = {
