@@ -86,17 +86,12 @@ async function publish(projectId, topicName, artifactBucket, messageJson) {
   core.info(`helm path: ${messageJson.latestHelmChart}`);
 
   const spinnakerMessage = {
-    kind: "storage#object",
-    name: messageJson.latestHelmChart,
-    bucket : artifactBucket,
     parameters: {
-      tag : messageJson.prNumber,
-      namespace: messageJson.namespace,
+      service : "case",
       cluster: "dev",
-      actor: messageJson.actor,
-      paramKey: messageJson.paramKey,
-      paramValue: messageJson.paramValue,
-      configBranch: messageJson.configBranch
+      namespace: "babbal",
+      feature: "@SEFT",
+      tag: "pr-118"
     }
  }
   const data = JSON.stringify(spinnakerMessage);
@@ -106,7 +101,7 @@ async function publish(projectId, topicName, artifactBucket, messageJson) {
   try {
     const messageId = await pubSubClient.topic(topicName)
       .publish(dataBuffer, {
-        ci: "actions"
+        ci: "acceptance-tests"
       });
     core.info(`Message ${messageId} published.`);
   } catch (error) {
