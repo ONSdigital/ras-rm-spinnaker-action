@@ -38,10 +38,6 @@ const run = async () => {
       }
     }
 
-    if (namespace.toLowerCase() === DEPLOY || paramKey.toLowerCase() === DEPLOY 
-        || paramValue === DEPLOY || configBranch === DEPLOY) {
-      throw { message: `Invalid token detected: ${DEPLOY} can only supplied once`};
-    }
 
     const messageJson = {
       namespace,
